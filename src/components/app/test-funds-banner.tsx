@@ -107,7 +107,7 @@ export function TestFundsBanner() {
 
       <p className="mt-3 text-[11px] text-slate-500">
         Connected as {truncate(address)} · Paste your address or connect the same
-        wallet on the faucet site. Chainlink is the fastest (0.5 ETH).
+        wallet on the faucet site. Use Alchemy or thirdweb — no mainnet LINK needed.
       </p>
     </div>
   );

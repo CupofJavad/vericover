@@ -1,22 +1,28 @@
 /** Base Sepolia testnet faucets — VeriCover runs on chain 84532 only. */
 export const baseSepoliaFaucets = [
   {
-    name: "Chainlink",
-    url: "https://faucets.chain.link/base-sepolia",
-    note: "No account required · connect wallet or paste address",
+    name: "Alchemy",
+    url: "https://www.alchemy.com/faucets/base-sepolia",
+    note: "Free account · no mainnet LINK required · 1 claim / 24h",
     recommended: true,
   },
   {
     name: "thirdweb",
     url: "https://thirdweb.com/base-sepolia-testnet",
-    note: "Social or wallet login · 1 claim / 24h",
+    note: "Wallet or social login · no mainnet LINK · 1 claim / 24h",
     recommended: true,
   },
   {
-    name: "Alchemy",
-    url: "https://www.alchemy.com/faucets/base-sepolia",
-    note: "Free Alchemy account · 1 claim / 24h",
+    name: "Coinbase CDP",
+    url: "https://portal.cdp.coinbase.com/products/faucet",
+    note: "Free CDP account · ETH + USDC · no mainnet LINK",
     recommended: true,
+  },
+  {
+    name: "Chainlink",
+    url: "https://faucets.chain.link/base-sepolia",
+    note: "Native ETH requires 1 LINK on Ethereum mainnet — skip unless you have LINK",
+    recommended: false,
   },
   {
     name: "QuickNode",
@@ -36,12 +42,7 @@ export const baseSepoliaFaucets = [
     note: "Paste address · captcha may apply",
     recommended: false,
   },
-  {
-    name: "Coinbase CDP",
-    url: "https://portal.cdp.coinbase.com/products/faucet",
-    note: "CDP account · ETH + USDC · programmatic API available",
-    recommended: false,
-  },
+
   {
     name: "Bware Labs",
     url: "https://bwarelabs.com/faucets/base-sepolia",

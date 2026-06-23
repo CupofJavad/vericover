@@ -26,9 +26,10 @@ const DEPLOYER = deployed.deployer;
 const RPC = process.env.BASE_SEPOLIA_RPC ?? "https://sepolia.base.org";
 
 const MANUAL_FAUCETS = [
-  ["Chainlink", "https://faucets.chain.link/base-sepolia"],
-  ["thirdweb", "https://thirdweb.com/base-sepolia-testnet"],
   ["Alchemy", "https://www.alchemy.com/faucets/base-sepolia"],
+  ["thirdweb", "https://thirdweb.com/base-sepolia-testnet"],
+  ["Coinbase CDP", "https://portal.cdp.coinbase.com/products/faucet"],
+  ["Chainlink (needs 1 LINK mainnet)", "https://faucets.chain.link/base-sepolia"],
   ["Ethereum Ecosystem", "https://www.ethereum-ecosystem.com/faucets/base-sepolia"],
   ["QuickNode", "https://faucet.quicknode.com/base/sepolia"],
   ["GetBlock", "https://getblock.io/faucet/base-sepolia/"],
