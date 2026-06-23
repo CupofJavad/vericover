@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "contracts:test": "cd contracts && forge test",
+    "deploy:warranties": "node scripts/deploy-warranty.mjs",
+    "deploy:check": "node scripts/check-deployer.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

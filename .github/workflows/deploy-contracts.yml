@@ -3,6 +3,9 @@ name: Deploy Warranty Contracts
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -11,6 +14,18 @@ jobs:
         with:
           submodules: recursive
       - uses: foundry-rs/foundry-toolchain@v1
+      - name: Check deployer balance
+        env:
+          DEPLOYER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
+          BASE_SEPOLIA_RPC: ${{ vars.BASE_SEPOLIA_RPC || 'https://sepolia.base.org' }}
+        run: |
+          ADDR=$(cast wallet address --private-key "$DEPLOYER_PRIVATE_KEY")
+          BAL=$(cast balance "$ADDR" --rpc-url "$BASE_SEPOLIA_RPC")
+          echo "Deployer $ADDR balance: $BAL wei"
+          if [ "$BAL" = "0" ]; then
+            echo "::error::Deployer has 0 ETH. Fund via https://portal.cdp.coinbase.com/products/faucet or https://ethfaucet.com/networks/base/base-sepolia"
+            exit 1
+          fi
       - name: Deploy to Base Sepolia
         working-directory: contracts
         env:
@@ -20,7 +35,12 @@ jobs:
           forge script script/Deploy.s.sol:Deploy --rpc-url "$BASE_SEPOLIA_RPC" --broadcast -vvv
       - name: Update deployed-addresses.json
         if: success()
-        run: node scripts/deploy-warranty.mjs
-        env:
-          DEPLOYER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
-          BASE_SEPOLIA_RPC: ${{ vars.BASE_SEPOLIA_RPC || 'https://sepolia.base.org' }}
+        run: node scripts/update-deployed-addresses.mjs
+      - name: Commit and push on-chain activation
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/lib/deployed-addresses.json
+          git diff --staged --quiet || git commit -m "chore: activate on-chain warranty rail on Base Sepolia"
+          git push
