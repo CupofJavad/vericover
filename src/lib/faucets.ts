@@ -1,22 +1,28 @@
 /** Base Sepolia testnet faucets — VeriCover runs on chain 84532 only. */
 export const baseSepoliaFaucets = [
   {
-    name: "Alchemy",
-    url: "https://www.alchemy.com/faucets/base-sepolia",
-    note: "Free account · no mainnet LINK required · 1 claim / 24h",
-    recommended: true,
-  },
-  {
-    name: "thirdweb",
-    url: "https://thirdweb.com/base-sepolia-testnet",
-    note: "Wallet or social login · no mainnet LINK · 1 claim / 24h",
+    name: "ETHGlobal",
+    url: "https://ethglobal.com/faucet/base-sepolia-84532",
+    note: "Free login (GitHub) · 0.05 ETH · no mainnet balance required",
     recommended: true,
   },
   {
     name: "Coinbase CDP",
     url: "https://portal.cdp.coinbase.com/products/faucet",
-    note: "Free CDP account · ETH + USDC · no mainnet LINK",
+    note: "Free CDP account · ETH + USDC · usually no mainnet balance",
     recommended: true,
+  },
+  {
+    name: "thirdweb",
+    url: "https://thirdweb.com/base-sepolia-testnet",
+    note: "thirdweb login · 0.01 ETH/day · no mainnet balance",
+    recommended: true,
+  },
+  {
+    name: "Alchemy",
+    url: "https://www.alchemy.com/faucets/base-sepolia",
+    note: "Requires 0.001 ETH on Ethereum mainnet — skip if you don't have it",
+    recommended: false,
   },
   {
     name: "Chainlink",
