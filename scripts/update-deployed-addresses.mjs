@@ -12,24 +12,38 @@ const root = join(__dirname, "..");
 const addressesPath = join(root, "src/lib/deployed-addresses.json");
 const broadcastDir = join(root, "contracts/broadcast/Deploy.s.sol/84532");
 
-function latestRunDir() {
+function latestBroadcastArtifact() {
   if (!statSync(broadcastDir, { throwIfNoEntry: false })) return null;
+
+  const direct = join(broadcastDir, "run-latest.json");
+  if (statSync(direct, { throwIfNoEntry: false })?.isFile()) {
+    return direct;
+  }
+
   const runs = readdirSync(broadcastDir)
     .filter((d) => d.startsWith("run-"))
+    .map((d) => join(broadcastDir, d))
+    .filter((p) => statSync(p).isDirectory())
     .sort()
     .reverse();
-  return runs[0] ? join(broadcastDir, runs[0]) : null;
+
+  for (const runDir of runs) {
+    const artifact = join(runDir, "run-latest.json");
+    if (statSync(artifact, { throwIfNoEntry: false })?.isFile()) {
+      return artifact;
+    }
+  }
+
+  return null;
 }
 
-const runDir = latestRunDir();
-if (!runDir) {
+const broadcastArtifact = latestBroadcastArtifact();
+if (!broadcastArtifact) {
   console.error("No broadcast artifacts found at", broadcastDir);
   process.exit(1);
 }
 
-const latestTx = JSON.parse(
-  readFileSync(join(runDir, "run-latest.json"), "utf8")
-);
+const latestTx = JSON.parse(readFileSync(broadcastArtifact, "utf8"));
 
 const nameMap = {
   ProductPassport721: "productPassport721",
