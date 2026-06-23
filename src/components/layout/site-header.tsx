@@ -10,6 +10,7 @@ import { siteConfig } from "@/lib/site";
 const mainNav = [
   { href: "/how-it-works", label: "How it works", isRoute: true },
   { href: "/#products", label: "Products", isRoute: false },
+  { href: "/app/warranties", label: "Warranties", isRoute: true },
   { href: "/#lp", label: "Become an LP", isRoute: false },
   { href: "/#faq", label: "FAQ", isRoute: false },
 ];
@@ -56,19 +57,17 @@ export function SiteHeader() {
           <LinkButton
             href="/app/lp"
             variant="outline"
-            className="hidden border-white/15 bg-white/5 text-white hover:bg-white/10 sm:inline-flex"
+            className="hidden border-white/15 bg-white/5 text-white hover:bg-white/10 lg:inline-flex"
           >
             Become an LP
           </LinkButton>
           <LinkButton
             href="/app"
-            className="hidden bg-teal-400 font-semibold text-[#060b14] hover:bg-teal-300 sm:inline-flex"
+            className="hidden bg-teal-400 font-semibold text-[#060b14] hover:bg-teal-300 md:inline-flex"
           >
             Launch App
           </LinkButton>
-          <div className="sm:hidden">
-            <ConnectButton />
-          </div>
+          <ConnectButton />
         </div>
       </div>
     </header>

@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useEffect, useState } from "react";
+import {
+  useAccount,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useReadContract,
+} from "wagmi";
 import { WalletGate } from "@/components/app/wallet-gate";
 import { Button } from "@/components/ui/button";
 import { LinkButton } from "@/components/ui/link-button";
+import { warrantyRedemptionAbi } from "@/lib/abis/warranty-redemption";
+import { productPassportAbi } from "@/lib/abis/product-passport";
+import { warrantyContracts, isWarrantyRailDeployed } from "@/lib/contracts";
 import {
   registerPassport,
   warrantyCatalog,
+  claimCodeHash,
+  validatePassportRegistration,
+  savePassportFromChain,
+  onChainSerialHash,
   type ProductPassport,
 } from "@/lib/warranties";
 
@@ -15,24 +27,104 @@ export default function RegisterWarrantyPage() {
   const { address } = useAccount();
   const [claimCode, setClaimCode] = useState("");
   const [serial, setSerial] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [passport, setPassport] = useState<ProductPassport | null>(null);
+  const onChain = isWarrantyRailDeployed();
+
+  const {
+    writeContract,
+    data: txHash,
+    isPending: isWriting,
+    error: writeError,
+    reset: resetWrite,
+  } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash: txHash });
+
+  const validated =
+    claimCode && serial
+      ? validatePassportRegistration(claimCode, serial)
+      : null;
+  const product = validated && validated.ok ? validated.product : null;
+  const serialNorm = validated && validated.ok ? validated.serial : "";
+
+  const { data: tokenIdOnChain } = useReadContract({
+    address: warrantyContracts.productPassport721,
+    abi: productPassportAbi,
+    functionName: "serialToTokenId",
+    args:
+      product && serialNorm && isConfirmed
+        ? [onChainSerialHash(serialNorm, product.sku)]
+        : undefined,
+    query: { enabled: onChain && isConfirmed && !!product && !!serialNorm },
+  });
+
+  useEffect(() => {
+    if (!isConfirmed || !address || !product || !serialNorm || !txHash) return;
+    if (tokenIdOnChain === undefined || tokenIdOnChain === BigInt(0)) return;
+
+    const tokenId = Number(tokenIdOnChain);
+    const now = Date.now();
+    const saved = savePassportFromChain(
+      address,
+      product,
+      serialNorm,
+      tokenId,
+      txHash,
+      now,
+      now + product.warrantyDays * 86400000
+    );
+    setPassport(saved);
+    resetWrite();
+  }, [
+    isConfirmed,
+    address,
+    product,
+    serialNorm,
+    txHash,
+    tokenIdOnChain,
+    resetWrite,
+  ]);
+
+  useEffect(() => {
+    if (writeError) setError(writeError.message.split("\n")[0]);
+  }, [writeError]);
 
   async function handleRegister() {
     if (!address) return;
-    setLoading(true);
     setError(null);
+
+    const check = validatePassportRegistration(claimCode, serial);
+    if (!check.ok) {
+      setError(check.error);
+      return;
+    }
+
+    if (onChain) {
+      writeContract({
+        address: warrantyContracts.warrantyRedemption,
+        abi: warrantyRedemptionAbi,
+        functionName: "redeem",
+        args: [
+          claimCodeHash(claimCode),
+          check.serial,
+          `ipfs://vericover/passport/${check.serial}`,
+        ],
+      });
+      return;
+    }
+
     await new Promise((r) => setTimeout(r, 900));
     const result = registerPassport(address, claimCode, serial);
     if (!result.ok) {
       setError(result.error);
-      setLoading(false);
       return;
     }
     setPassport(result.passport);
-    setLoading(false);
   }
+
+  const loading = isWriting || isConfirming;
 
   if (passport) {
     return (
@@ -45,11 +137,18 @@ export default function RegisterWarrantyPage() {
         <p className="mt-1 text-sm text-slate-500">
           Warranty active until {new Date(passport.warrantyEnd).toLocaleDateString()}
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <LinkButton
-            href="/app/warranties"
-            className="bg-emerald-400 text-[#060b14]"
+        {onChain && (
+          <a
+            href={`https://sepolia.basescan.org/tx/${passport.mintTxHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block text-xs text-emerald-400 hover:underline"
           >
+            View on Basescan →
+          </a>
+        )}
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <LinkButton href="/app/warranties" className="bg-emerald-400 text-[#060b14]">
             My passports
           </LinkButton>
           <Button
@@ -76,7 +175,8 @@ export default function RegisterWarrantyPage() {
           <h1 className="text-2xl font-semibold md:text-3xl">Register your product</h1>
           <p className="mt-1 text-slate-400">
             Enter the claim code from your product packaging and the serial number on the
-            device label. This mints your digital product passport.
+            device label. This mints your digital product passport
+            {onChain ? " on Base Sepolia" : " (local demo mode)"}.
           </p>
         </div>
 
@@ -120,7 +220,13 @@ export default function RegisterWarrantyPage() {
             disabled={!claimCode.trim() || !serial.trim() || loading}
             className="w-full bg-emerald-400 py-6 text-base font-semibold text-[#060b14] hover:bg-emerald-300"
           >
-            {loading ? "Minting passport…" : "Mint Product Passport NFT"}
+            {loading
+              ? isConfirming
+                ? "Confirming on-chain…"
+                : "Confirm in wallet…"
+              : onChain
+                ? "Mint Passport NFT (on-chain)"
+                : "Mint Product Passport NFT"}
           </Button>
         </div>
 
@@ -131,7 +237,9 @@ export default function RegisterWarrantyPage() {
               <li key={p.sku} className="flex flex-wrap gap-2">
                 <span className="font-mono text-emerald-400/90">{p.claimCode}</span>
                 <span>→ {p.name}</span>
-                <span className="text-slate-600">(serial: {p.serialPrefix}-…)</span>
+                <span className="text-slate-600">
+                  (e.g. {p.serialPrefix}-2026-0001842)
+                </span>
               </li>
             ))}
           </ul>

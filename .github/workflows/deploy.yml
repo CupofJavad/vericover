@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [master, main]
+    branches: [master, main, feature/digital-warranties]
   workflow_dispatch:
 
 permissions:
@@ -27,6 +27,10 @@ jobs:
       - run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /vericover
+          NEXT_PUBLIC_PASSPORT_ADDRESS: ${{ vars.PASSPORT_ADDRESS || '' }}
+          NEXT_PUBLIC_REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS || '' }}
+          NEXT_PUBLIC_CLAIM_MANAGER_ADDRESS: ${{ vars.CLAIM_MANAGER_ADDRESS || '' }}
+          NEXT_PUBLIC_REDEMPTION_ADDRESS: ${{ vars.REDEMPTION_ADDRESS || '' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

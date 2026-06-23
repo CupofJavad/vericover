@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ConnectButton } from "@/components/wallet/connect-button";
+import { ChainBanner } from "@/components/app/chain-banner";
 import { ShieldIcon } from "@/components/icons";
 import { siteConfig } from "@/lib/site";
 
@@ -71,7 +72,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-8 md:px-6">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 py-8 md:px-6">
+        <ChainBanner />
+        {children}
+      </main>
       <footer className="border-t border-white/10 px-4 py-6 text-center text-xs text-slate-500">
         Base Sepolia testnet · Founded by {siteConfig.founder.name} ·{" "}
         <Link href="/how-it-works" className="text-teal-400 hover:underline">

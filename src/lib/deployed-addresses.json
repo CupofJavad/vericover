@@ -1,0 +1,13 @@
+{
+  "chainId": 84532,
+  "network": "base-sepolia",
+  "productPassport721": "0x23193001a1C61cDEB68E7bd1a4E87a38eC586165",
+  "warrantyRegistry": "0x4D25946083f37910F8837406aC0dd2B5E4543075",
+  "warrantyClaimManager": "0xE44123dEB8fE2C258B7B73d85557126ADDC02494",
+  "warrantyRedemption": "0xc0408757A76715dC3E9761be35aA790b94d64008",
+  "novaTechVault": "0x60C69aDEc298461F7Ae504e1FF8B3779A00657c4",
+  "soundForgeVault": "0xbAC6f4715C7E276073051fc2011C4f4134783E96",
+  "deployer": "0xb0f75fbAf7291F490D7d2416F0EbAD5AFF9abb69",
+  "deployedAt": null,
+  "deployNote": "Addresses are deterministic for deployer nonce 0. Fund deployer via Coinbase Faucet then run: DEPLOYER_PRIVATE_KEY=0x... node scripts/deploy-warranty.mjs"
+}

@@ -1,3 +1,4 @@
+import { encodePacked, keccak256, toBytes } from "viem";
 import { generateTxHash } from "./policies";
 
 export type ClaimType = "repair" | "replace" | "refund";
@@ -94,6 +95,25 @@ export const warrantyCatalog: WarrantyProduct[] = [
   },
 ];
 
+/** Matches on-chain keccak256(abi.encodePacked(claimCode)) */
+export function claimCodeHash(code: string): `0x${string}` {
+  return keccak256(toBytes(code.trim().toUpperCase()));
+}
+
+export function skuHash(sku: string): `0x${string}` {
+  return keccak256(toBytes(sku));
+}
+
+/** Matches WarrantyRedemption.computeSerialHash on-chain */
+export function onChainSerialHash(serial: string, sku: string): `0x${string}` {
+  return keccak256(
+    encodePacked(
+      ["string", "bytes32", "string"],
+      [serial, skuHash(sku), "vericover-v1"]
+    )
+  );
+}
+
 export function hashSerial(serial: string, sku: string): string {
   const input = `${serial}:${sku}:vericover-v1`;
   let hash = 0;
@@ -168,11 +188,10 @@ export interface RegisterError {
   error: string;
 }
 
-export function registerPassport(
-  address: string,
+export function validatePassportRegistration(
   claimCode: string,
   serialNumber: string
-): RegisterResult | RegisterError {
+): RegisterError | { ok: true; product: WarrantyProduct; serial: string } {
   const product = findProductByClaimCode(claimCode);
   if (!product) {
     return { ok: false, error: "Invalid claim code. Check the QR card in your product box." };
@@ -180,16 +199,64 @@ export function registerPassport(
   if (isClaimCodeUsed(claimCode)) {
     return { ok: false, error: "This claim code has already been redeemed." };
   }
-  const serial = serialNumber.trim();
+  const serial = serialNumber.trim().toUpperCase();
   if (serial.length < 6) {
     return { ok: false, error: "Enter the full serial number from your product label." };
   }
-  if (!serial.toUpperCase().startsWith(product.serialPrefix)) {
+  if (!serial.startsWith(product.serialPrefix)) {
     return {
       ok: false,
       error: `Serial should start with ${product.serialPrefix} (see product label).`,
     };
   }
+  return { ok: true, product, serial };
+}
+
+export function savePassportFromChain(
+  address: string,
+  product: WarrantyProduct,
+  serial: string,
+  tokenId: number,
+  txHash: string,
+  warrantyStart: number,
+  warrantyEnd: number
+): ProductPassport {
+  const passport: ProductPassport = {
+    id: `${address}-${tokenId}`,
+    tokenId,
+    sku: product.sku,
+    productName: product.name,
+    manufacturer: product.manufacturer,
+    manufacturerId: product.manufacturerId,
+    serialNumber: serial,
+    serialHash: hashSerial(serial, product.sku),
+    owner: address,
+    warrantyStart,
+    warrantyEnd,
+    termsHash: hashSerial(product.sku, "terms-v1"),
+    status: "active",
+    registeredAt: warrantyStart,
+    mintTxHash: txHash,
+  };
+
+  const key = address.toLowerCase();
+  const raw = localStorage.getItem(PASSPORT_KEY);
+  const all: Record<string, ProductPassport[]> = raw ? JSON.parse(raw) : {};
+  const list = all[key] ?? [];
+  all[key] = [passport, ...list.filter((p) => p.tokenId !== tokenId)];
+  localStorage.setItem(PASSPORT_KEY, JSON.stringify(all));
+  markCodeUsed(product.claimCode);
+  return passport;
+}
+
+export function registerPassport(
+  address: string,
+  claimCode: string,
+  serialNumber: string
+): RegisterResult | RegisterError {
+  const validated = validatePassportRegistration(claimCode, serialNumber);
+  if (!validated.ok) return validated;
+  const { product, serial } = validated;
 
   const now = Date.now();
   const tokenId = getNextPassportTokenId(address);

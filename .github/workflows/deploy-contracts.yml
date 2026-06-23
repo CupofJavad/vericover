@@ -1,0 +1,26 @@
+name: Deploy Warranty Contracts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: foundry-rs/foundry-toolchain@v1
+      - name: Deploy to Base Sepolia
+        working-directory: contracts
+        env:
+          DEPLOYER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
+          BASE_SEPOLIA_RPC: ${{ vars.BASE_SEPOLIA_RPC || 'https://sepolia.base.org' }}
+        run: |
+          forge script script/Deploy.s.sol:Deploy --rpc-url "$BASE_SEPOLIA_RPC" --broadcast -vvv
+      - name: Update deployed-addresses.json
+        if: success()
+        run: node scripts/deploy-warranty.mjs
+        env:
+          DEPLOYER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
+          BASE_SEPOLIA_RPC: ${{ vars.BASE_SEPOLIA_RPC || 'https://sepolia.base.org' }}

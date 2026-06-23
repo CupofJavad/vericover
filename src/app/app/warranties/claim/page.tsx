@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import {
+  useAccount,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { WalletGate } from "@/components/app/wallet-gate";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/link-button";
+import { warrantyClaimManagerAbi, claimTypeOnChain } from "@/lib/abis/warranty-claim-manager";
+import { warrantyContracts, isWarrantyRailDeployed } from "@/lib/contracts";
 import {
   getPassports,
   getClaims,
@@ -13,6 +19,7 @@ import {
   simulateClaimProgress,
   claimTypeLabels,
   claimStatusLabels,
+  warrantyCatalog,
   type ClaimType,
   type ProductPassport,
   type WarrantyClaim,
@@ -26,6 +33,14 @@ const claimStatusColors: Record<WarrantyClaim["status"], string> = {
   paid: "border-teal-400/30 text-teal-300",
 };
 
+function estimatePayout(productSku: string, claimType: ClaimType): number {
+  const product = warrantyCatalog.find((p) => p.sku === productSku);
+  const max = product?.maxClaimValue ?? 100;
+  if (claimType === "refund") return max * 0.8;
+  if (claimType === "replace") return max;
+  return max * 0.3;
+}
+
 export default function WarrantyClaimPage() {
   const { address } = useAccount();
   const [passports, setPassports] = useState<ProductPassport[]>([]);
@@ -33,9 +48,21 @@ export default function WarrantyClaimPage() {
   const [selectedId, setSelectedId] = useState("");
   const [claimType, setClaimType] = useState<ClaimType>("repair");
   const [description, setDescription] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<WarrantyClaim | null>(null);
+  const onChain = isWarrantyRailDeployed();
+
+  const selectedPassport = passports.find((p) => p.id === selectedId);
+
+  const {
+    writeContract,
+    data: txHash,
+    isPending: isWriting,
+    error: writeError,
+  } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash: txHash });
 
   useEffect(() => {
     if (address) {
@@ -46,20 +73,66 @@ export default function WarrantyClaimPage() {
     }
   }, [address, selectedId]);
 
+  useEffect(() => {
+    if (!isConfirmed || !address || !selectedPassport || !txHash) return;
+    const payout = estimatePayout(selectedPassport.sku, claimType);
+    const claim: WarrantyClaim = {
+      id: `${selectedPassport.id}-claim-${Date.now()}`,
+      passportId: selectedPassport.id,
+      tokenId: selectedPassport.tokenId,
+      productName: selectedPassport.productName,
+      claimType,
+      description: description.trim(),
+      status: "submitted",
+      submittedAt: Date.now(),
+      payoutAmount: payout,
+      txHash,
+    };
+    const key = address.toLowerCase();
+    const raw = localStorage.getItem("vericover_warranty_claims_v1");
+    const all: Record<string, WarrantyClaim[]> = raw ? JSON.parse(raw) : {};
+    const list = all[key] ?? [];
+    all[key] = [claim, ...list];
+    localStorage.setItem("vericover_warranty_claims_v1", JSON.stringify(all));
+    setSuccess(claim);
+    setClaims(getClaims(address));
+  }, [isConfirmed, address, selectedPassport, txHash, claimType, description]);
+
+  useEffect(() => {
+    if (writeError) setError(writeError.message.split("\n")[0]);
+  }, [writeError]);
+
   async function handleSubmit() {
     if (!address || !selectedId) return;
-    setLoading(true);
     setError(null);
-    await new Promise((r) => setTimeout(r, 800));
+
+    const passport = passports.find((p) => p.id === selectedId);
+    if (!passport) return;
+
+    if (onChain) {
+      const payout = estimatePayout(passport.sku, claimType);
+      const amount = BigInt(Math.round(payout * 1_000_000));
+      writeContract({
+        address: warrantyContracts.warrantyClaimManager,
+        abi: warrantyClaimManagerAbi,
+        functionName: "submitClaim",
+        args: [
+          BigInt(passport.tokenId),
+          claimTypeOnChain[claimType],
+          amount,
+          `ipfs://vericover/claim/${passport.tokenId}/${Date.now()}`,
+        ],
+      });
+      return;
+    }
+
     const result = submitClaim(address, selectedId, claimType, description);
     if (!result.ok) {
       setError(result.error);
-      setLoading(false);
       return;
     }
     setSuccess(result.claim);
     setClaims(getClaims(address));
-    setLoading(false);
   }
 
   function handleAdvance(claimId: string) {
@@ -67,6 +140,8 @@ export default function WarrantyClaimPage() {
     simulateClaimProgress(address, claimId);
     setClaims(getClaims(address));
   }
+
+  const loading = isWriting || isConfirming;
 
   if (success) {
     return (
@@ -79,6 +154,16 @@ export default function WarrantyClaimPage() {
         <p className="mt-1 text-sm text-slate-500">
           Est. payout up to ${success.payoutAmount?.toFixed(2)} USDC from manufacturer tranche
         </p>
+        {onChain && (
+          <a
+            href={`https://sepolia.basescan.org/tx/${success.txHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block text-xs text-emerald-400 hover:underline"
+          >
+            View on Basescan →
+          </a>
+        )}
         <LinkButton href="/app/warranties" className="mt-6 bg-emerald-400 text-[#060b14]">
           Back to warranties
         </LinkButton>
@@ -169,7 +254,13 @@ export default function WarrantyClaimPage() {
               disabled={loading || description.trim().length < 20}
               className="w-full bg-emerald-400 py-6 text-base font-semibold text-[#060b14] hover:bg-emerald-300"
             >
-              {loading ? "Submitting…" : "Submit warranty claim"}
+              {loading
+                ? isConfirming
+                  ? "Confirming on-chain…"
+                  : "Confirm in wallet…"
+                : onChain
+                  ? "Submit claim (on-chain)"
+                  : "Submit warranty claim"}
             </Button>
           </div>
         )}
@@ -177,9 +268,11 @@ export default function WarrantyClaimPage() {
         {claims.length > 0 && (
           <section className="space-y-3">
             <h2 className="text-lg font-semibold">Your claims</h2>
-            <p className="text-xs text-slate-500">
-              Testnet demo: tap Advance to simulate manufacturer review stages.
-            </p>
+            {!onChain && (
+              <p className="text-xs text-slate-500">
+                Testnet demo: tap Advance to simulate manufacturer review stages.
+              </p>
+            )}
             {claims.map((c) => (
               <div
                 key={c.id}
@@ -197,7 +290,17 @@ export default function WarrantyClaimPage() {
                   {c.payoutAmount != null && (
                     <span>Est. ${c.payoutAmount.toFixed(2)} USDC</span>
                   )}
-                  {c.status !== "paid" && c.status !== "rejected" && (
+                  {onChain && c.txHash && (
+                    <a
+                      href={`https://sepolia.basescan.org/tx/${c.txHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-400 hover:underline"
+                    >
+                      Basescan →
+                    </a>
+                  )}
+                  {!onChain && c.status !== "paid" && c.status !== "rejected" && (
                     <button
                       type="button"
                       onClick={() => handleAdvance(c.id)}

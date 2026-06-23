@@ -31,8 +31,11 @@ contract WarrantyRegistry is AccessControl {
     {
         require(!manufacturers[manufacturerId].active, "Already registered");
         manufacturers[manufacturerId] = Manufacturer({name: name, active: true, trancheVault: address(0)});
-        _grantRole(MANUFACTURER_ROLE, msg.sender);
         emit ManufacturerRegistered(manufacturerId, name);
+    }
+
+    function grantManufacturerRole(address account) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _grantRole(MANUFACTURER_ROLE, account);
     }
 
     function linkTrancheVault(bytes32 manufacturerId, address vault)
