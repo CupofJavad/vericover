@@ -29,11 +29,11 @@ const insuranceProducts = [
 ];
 
 const warrantyProduct = {
-  name: "Digital Product Warranties",
+  name: "Product Protection Plans",
   tag: "Physical goods",
   description:
-    "Register electronics with a claim code to mint a Product Passport NFT. File repair, replacement, or refund claims — funded by manufacturer tranches, isolated from parametric LP pools.",
-  trigger: "Claim code + serial → passport mint",
+    "Register electronics with a registration code and serial number — like SquareTrade or Assurion. File repair, replacement, or refund claims backed by your manufacturer.",
+  trigger: "Registration code + serial → activate coverage",
   premium: "Included with product / manufacturer-backed",
 };
 
@@ -52,8 +52,8 @@ export function ProductsSection() {
             Cover that pays itself
           </h2>
           <p className="max-w-2xl text-slate-400">
-            Parametric insurance products plus a separate warranty rail for physical
-            goods. Policies and passports are immutable ERC-721 NFTs — verify on Basescan.
+            Parametric insurance for digital risks, plus product protection for physical
+            goods — both with permanent, verifiable records you can trust.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

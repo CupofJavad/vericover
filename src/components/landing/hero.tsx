@@ -65,7 +65,7 @@ export function Hero() {
               variant="outline"
               className="border-emerald-400/30 bg-emerald-400/5 text-emerald-200 hover:bg-emerald-400/10"
             >
-              Digital warranties
+              Product protection
             </LinkButton>
           </div>
           <p className="mt-6 text-sm text-slate-500">

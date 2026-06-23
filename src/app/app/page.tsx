@@ -60,9 +60,9 @@ export default function DashboardPage() {
             sub={`${policies.length} total`}
           />
           <StatCard
-            label="Warranty Passports"
+            label="Registered Products"
             value={String(passportCount)}
-            sub="Digital product passports"
+            sub="Active protection plans"
           />
           <StatCard
             label="LP Staked"
@@ -86,7 +86,7 @@ export default function DashboardPage() {
                 My Policies
               </LinkButton>
               <LinkButton href="/app/warranties" variant="outline" className="border-white/15 text-white">
-                Warranties
+                My Products
               </LinkButton>
             </div>
           </div>

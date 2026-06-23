@@ -24,18 +24,18 @@ export function ChainBanner() {
       }`}
     >
       {wrongNetwork ? (
-        <span>Switch to Base Sepolia to use VeriCover.</span>
+        <span>Switch to the VeriCover test network to register products or file claims.</span>
       ) : onChain ? (
         <span>
-          Connected on {deployedMeta.network} · Warranty rail live on-chain
+          You&apos;re signed in · Product protection is active
           {deployedMeta.deployedAt
-            ? ` (deployed ${new Date(deployedMeta.deployedAt).toLocaleDateString()})`
+            ? ` (live since ${new Date(deployedMeta.deployedAt).toLocaleDateString()})`
             : ""}
         </span>
       ) : (
         <span>
-          Connected on Base Sepolia · Demo mode (localStorage) until contracts are
-          broadcast. Wallet connect is live — buy cover, register warranties, and stake.
+          You&apos;re signed in · Demo mode — try registering a product and filing a claim.
+          Full protection goes live when contracts are deployed.
         </span>
       )}
     </div>

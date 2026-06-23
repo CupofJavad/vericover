@@ -194,10 +194,13 @@ export function validatePassportRegistration(
 ): RegisterError | { ok: true; product: WarrantyProduct; serial: string } {
   const product = findProductByClaimCode(claimCode);
   if (!product) {
-    return { ok: false, error: "Invalid claim code. Check the QR card in your product box." };
+    return {
+      ok: false,
+      error: "Invalid registration code. Check the card in your product box or receipt.",
+    };
   }
   if (isClaimCodeUsed(claimCode)) {
-    return { ok: false, error: "This claim code has already been redeemed." };
+    return { ok: false, error: "This registration code has already been used." };
   }
   const serial = serialNumber.trim().toUpperCase();
   if (serial.length < 6) {
@@ -327,7 +330,7 @@ export function submitClaim(
   const passports = getPassports(address);
   const passport = passports.find((p) => p.id === passportId);
   if (!passport) {
-    return { ok: false, error: "Passport not found." };
+    return { ok: false, error: "Registered product not found." };
   }
   if (passport.status !== "active") {
     return { ok: false, error: "Warranty is not active for this product." };
@@ -424,6 +427,11 @@ export const claimStatusLabels: Record<ClaimStatus, string> = {
   submitted: "Submitted",
   under_review: "Under review",
   approved: "Approved",
-  rejected: "Rejected",
-  paid: "Paid out",
+  rejected: "Not approved",
+  paid: "Resolved",
 };
+
+/** Friendly warranty ID shown in the UI (maps to on-chain tokenId). */
+export function formatWarrantyId(tokenId: number): string {
+  return `WR-${tokenId}`;
+}

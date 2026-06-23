@@ -19,6 +19,7 @@ import {
   simulateClaimProgress,
   claimTypeLabels,
   claimStatusLabels,
+  formatWarrantyId,
   warrantyCatalog,
   type ClaimType,
   type ProductPassport,
@@ -152,20 +153,31 @@ export default function WarrantyClaimPage() {
           {claimTypeLabels[success.claimType]} request for {success.productName}
         </p>
         <p className="mt-1 text-sm text-slate-500">
-          Est. payout up to ${success.payoutAmount?.toFixed(2)} USDC from manufacturer tranche
+          Estimated coverage value up to ${success.payoutAmount?.toFixed(2)} — funded by{" "}
+          {warrantyCatalog.find((p) => p.name === success.productName)?.manufacturer ??
+            "your manufacturer"}
+        </p>
+        <p className="mt-3 text-xs text-slate-500">
+          What happens next: the manufacturer reviews your request. You can track status
+          below or return to My Products anytime.
         </p>
         {onChain && (
-          <a
-            href={`https://sepolia.basescan.org/tx/${success.txHash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 inline-block text-xs text-emerald-400 hover:underline"
-          >
-            View on Basescan →
-          </a>
+          <details className="mt-3 text-left">
+            <summary className="cursor-pointer text-xs text-slate-500 hover:text-slate-400">
+              Verification details
+            </summary>
+            <a
+              href={`https://sepolia.basescan.org/tx/${success.txHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-block text-xs text-emerald-400/80 hover:underline"
+            >
+              View permanent claim record →
+            </a>
+          </details>
         )}
         <LinkButton href="/app/warranties" className="mt-6 bg-emerald-400 text-[#060b14]">
-          Back to warranties
+          Back to My Products
         </LinkButton>
       </div>
     );
@@ -177,8 +189,8 @@ export default function WarrantyClaimPage() {
         <div>
           <h1 className="text-2xl font-semibold md:text-3xl">File a warranty claim</h1>
           <p className="mt-1 text-slate-400">
-            Repair, replacement, or refund — reviewed by the manufacturer. Payouts come from
-            their dedicated tranche vault, not the parametric insurance pool.
+            Tell us what happened — choose repair, replacement, or refund. The manufacturer
+            reviews your request, just like Assurion or SquareTrade.
           </p>
         </div>
 
@@ -195,7 +207,7 @@ export default function WarrantyClaimPage() {
         ) : (
           <div className="rounded-2xl border border-white/10 bg-[#131f35] p-6 space-y-5">
             <div>
-              <label className="mb-2 block text-sm text-slate-300">Product passport</label>
+              <label className="mb-2 block text-sm text-slate-300">Registered product</label>
               <select
                 value={selectedId}
                 onChange={(e) => setSelectedId(e.target.value)}
@@ -203,7 +215,7 @@ export default function WarrantyClaimPage() {
               >
                 {passports.map((p) => (
                   <option key={p.id} value={p.id}>
-                    #{p.tokenId} — {p.productName}
+                    {formatWarrantyId(p.tokenId)} — {p.productName}
                   </option>
                 ))}
               </select>
@@ -256,11 +268,9 @@ export default function WarrantyClaimPage() {
             >
               {loading
                 ? isConfirming
-                  ? "Confirming on-chain…"
-                  : "Confirm in wallet…"
-                : onChain
-                  ? "Submit claim (on-chain)"
-                  : "Submit warranty claim"}
+                  ? "Submitting your claim…"
+                  : "Approve in your wallet app…"
+                : "Submit warranty request"}
             </Button>
           </div>
         )}
@@ -270,7 +280,7 @@ export default function WarrantyClaimPage() {
             <h2 className="text-lg font-semibold">Your claims</h2>
             {!onChain && (
               <p className="text-xs text-slate-500">
-                Testnet demo: tap Advance to simulate manufacturer review stages.
+                Demo mode: tap Advance to simulate manufacturer review stages.
               </p>
             )}
             {claims.map((c) => (
@@ -288,16 +298,16 @@ export default function WarrantyClaimPage() {
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500">
                   <span>{claimTypeLabels[c.claimType]}</span>
                   {c.payoutAmount != null && (
-                    <span>Est. ${c.payoutAmount.toFixed(2)} USDC</span>
+                    <span>Est. coverage ${c.payoutAmount.toFixed(2)}</span>
                   )}
                   {onChain && c.txHash && (
                     <a
                       href={`https://sepolia.basescan.org/tx/${c.txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-emerald-400 hover:underline"
+                      className="text-slate-500 hover:text-emerald-400/80 hover:underline"
                     >
-                      Basescan →
+                      Verification →
                     </a>
                   )}
                   {!onChain && c.status !== "paid" && c.status !== "rejected" && (

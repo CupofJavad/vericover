@@ -130,26 +130,35 @@ export default function RegisterWarrantyPage() {
     return (
       <div className="mx-auto max-w-lg rounded-2xl border border-emerald-400/30 bg-[#131f35] p-8 text-center">
         <div className="mb-4 text-4xl">✓</div>
-        <h2 className="text-xl font-semibold text-emerald-300">Passport minted!</h2>
+        <h2 className="text-xl font-semibold text-emerald-300">Product registered!</h2>
         <p className="mt-2 text-slate-400">
-          Product Passport #{passport.tokenId} — {passport.productName}
+          {passport.productName} — Warranty ID WR-{passport.tokenId}
         </p>
         <p className="mt-1 text-sm text-slate-500">
-          Warranty active until {new Date(passport.warrantyEnd).toLocaleDateString()}
+          Coverage active until {new Date(passport.warrantyEnd).toLocaleDateString()}
+        </p>
+        <p className="mt-3 text-xs text-slate-500">
+          What happens next: keep your serial number handy. If something breaks, file a
+          claim from My Products — the manufacturer will review your request.
         </p>
         {onChain && (
-          <a
-            href={`https://sepolia.basescan.org/tx/${passport.mintTxHash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 inline-block text-xs text-emerald-400 hover:underline"
-          >
-            View on Basescan →
-          </a>
+          <details className="mt-3 text-left">
+            <summary className="cursor-pointer text-xs text-slate-500 hover:text-slate-400">
+              Verification details
+            </summary>
+            <a
+              href={`https://sepolia.basescan.org/tx/${passport.mintTxHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-block text-xs text-emerald-400/80 hover:underline"
+            >
+              View permanent registration record →
+            </a>
+          </details>
         )}
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <LinkButton href="/app/warranties" className="bg-emerald-400 text-[#060b14]">
-            My passports
+            My products
           </LinkButton>
           <Button
             type="button"
@@ -174,16 +183,16 @@ export default function RegisterWarrantyPage() {
         <div>
           <h1 className="text-2xl font-semibold md:text-3xl">Register your product</h1>
           <p className="mt-1 text-slate-400">
-            Enter the claim code from your product packaging and the serial number on the
-            device label. This mints your digital product passport
-            {onChain ? " on Base Sepolia" : " (local demo mode)"}.
+            Enter the registration code from your product box or receipt, plus the serial
+            number on the device label. This activates your protection plan — like
+            registering with SquareTrade or Assurion.
           </p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-[#131f35] p-6 space-y-5">
           <div>
             <label htmlFor="claim-code" className="mb-2 block text-sm text-slate-300">
-              Claim code
+              Registration code
             </label>
             <input
               id="claim-code"
@@ -222,16 +231,14 @@ export default function RegisterWarrantyPage() {
           >
             {loading
               ? isConfirming
-                ? "Confirming on-chain…"
-                : "Confirm in wallet…"
-              : onChain
-                ? "Mint Passport NFT (on-chain)"
-                : "Mint Product Passport NFT"}
+                ? "Saving your registration…"
+                : "Approve in your wallet app…"
+              : "Register product"}
           </Button>
         </div>
 
         <div className="rounded-xl border border-white/10 bg-black/20 p-5">
-          <h2 className="text-sm font-semibold text-slate-300">Demo claim codes (testnet)</h2>
+          <h2 className="text-sm font-semibold text-slate-300">Demo registration codes (testnet)</h2>
           <ul className="mt-3 space-y-2 text-xs text-slate-500">
             {warrantyCatalog.map((p) => (
               <li key={p.sku} className="flex flex-wrap gap-2">

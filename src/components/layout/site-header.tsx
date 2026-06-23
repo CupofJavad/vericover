@@ -10,7 +10,7 @@ import { siteConfig } from "@/lib/site";
 const mainNav = [
   { href: "/how-it-works", label: "How it works", isRoute: true },
   { href: "/#products", label: "Products", isRoute: false },
-  { href: "/app/warranties", label: "Warranties", isRoute: true },
+  { href: "/app/warranties", label: "My Products", isRoute: true },
   { href: "/#lp", label: "Become an LP", isRoute: false },
   { href: "/#faq", label: "FAQ", isRoute: false },
 ];

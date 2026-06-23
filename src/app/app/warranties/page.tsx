@@ -9,9 +9,16 @@ import {
   getPassports,
   getClaims,
   claimStatusLabels,
+  formatWarrantyId,
   type ProductPassport,
   type WarrantyClaim,
 } from "@/lib/warranties";
+
+const passportStatusLabels: Record<ProductPassport["status"], string> = {
+  active: "Active coverage",
+  expired: "Expired",
+  claimed: "Claim in progress",
+};
 
 const passportStatusColors: Record<ProductPassport["status"], string> = {
   active: "border-emerald-400/30 text-emerald-300",
@@ -46,10 +53,10 @@ export default function WarrantiesPage() {
       <div className="space-y-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold md:text-3xl">Digital Warranties</h1>
+            <h1 className="text-2xl font-semibold md:text-3xl">My Products</h1>
             <p className="mt-1 max-w-xl text-slate-400">
-              Product passports on-chain — register with your claim code, transfer when
-              you sell, and file repair or refund claims backed by manufacturer tranches.
+              Register electronics with your registration code, view coverage dates, and
+              file repair, replacement, or refund requests — backed by your manufacturer.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -70,14 +77,19 @@ export default function WarrantiesPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
-          <Stat label="Active passports" value={String(active.length)} />
-          <Stat label="Total registered" value={String(passports.length)} />
-          <Stat label="Open claims" value={String(claims.filter((c) => c.status !== "paid" && c.status !== "rejected").length)} />
+          <Stat label="Active coverage" value={String(active.length)} />
+          <Stat label="Registered products" value={String(passports.length)} />
+          <Stat
+            label="Open claims"
+            value={String(
+              claims.filter((c) => c.status !== "paid" && c.status !== "rejected").length
+            )}
+          />
         </div>
 
         <p className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-100/80">
-          Digital warranty infrastructure by Javad — not licensed insurance. Manufacturer
-          tranches fund discretionary claims; parametric LP pools are separate.
+          Product protection by Javad — manufacturer-backed service plans. This is not
+          licensed insurance; coverage terms come from your product&apos;s protection plan.
         </p>
 
         {passports.length === 0 ? (
@@ -85,9 +97,10 @@ export default function WarrantiesPage() {
             <p className="text-4xl" aria-hidden>
               📦
             </p>
-            <p className="mt-4 text-slate-400">No product passports yet.</p>
+            <p className="mt-4 text-slate-400">No registered products yet.</p>
             <p className="mt-2 text-sm text-slate-500">
-              Scan the QR on your product box and enter your claim code to mint a passport NFT.
+              Find the registration code on your product box or receipt, then enter it
+              with your serial number to activate coverage.
             </p>
             <LinkButton
               href="/app/warranties/register"
@@ -104,32 +117,40 @@ export default function WarrantiesPage() {
                 className="card-shine rounded-2xl border border-white/10 bg-[#131f35] p-6"
               >
                 <div className="mb-4 flex items-center justify-between">
-                  <span className="font-mono text-sm text-slate-400">
-                    Passport #{p.tokenId}
+                  <span className="text-sm text-slate-400">
+                    Warranty ID:{" "}
+                    <span className="font-medium text-slate-200">
+                      {formatWarrantyId(p.tokenId)}
+                    </span>
                   </span>
                   <Badge variant="outline" className={passportStatusColors[p.status]}>
-                    {p.status}
+                    {passportStatusLabels[p.status]}
                   </Badge>
                 </div>
                 <h2 className="text-lg font-semibold">{p.productName}</h2>
-                <p className="mt-1 text-xs text-slate-500">{p.manufacturer}</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Covered by {p.manufacturer}
+                </p>
                 <dl className="mt-4 space-y-2 text-sm">
-                  <Row label="Serial" value={p.serialNumber} mono />
-                  <Row label="Serial hash" value={truncate(p.serialHash)} mono />
+                  <Row label="Serial number" value={p.serialNumber} mono />
                   <Row
-                    label="Warranty ends"
+                    label="Coverage ends"
                     value={new Date(p.warrantyEnd).toLocaleDateString()}
                   />
-                  <Row label="Owner" value={truncate(p.owner)} mono />
                 </dl>
-                <a
-                  href={`https://sepolia.basescan.org/tx/${p.mintTxHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-block text-xs text-emerald-400 hover:underline"
-                >
-                  View mint on Basescan →
-                </a>
+                <details className="mt-4">
+                  <summary className="cursor-pointer text-xs text-slate-500 hover:text-slate-400">
+                    Verification details
+                  </summary>
+                  <a
+                    href={`https://sepolia.basescan.org/tx/${p.mintTxHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-block text-xs text-emerald-400/80 hover:underline"
+                  >
+                    View permanent registration record →
+                  </a>
+                </details>
               </article>
             ))}
           </div>
@@ -187,8 +208,4 @@ function Row({
       </dd>
     </div>
   );
-}
-
-function truncate(s: string) {
-  return `${s.slice(0, 8)}…${s.slice(-6)}`;
 }

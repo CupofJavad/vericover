@@ -308,21 +308,21 @@ export default function HowItWorksPage() {
         <section className="border-y border-white/10 bg-emerald-500/5 py-20">
           <div className="mx-auto max-w-5xl px-6">
             <Badge className="mb-4 border-emerald-400/20 bg-emerald-400/10 text-emerald-200 hover:bg-emerald-400/10">
-              New · Warranty rail
+              Product protection
             </Badge>
             <h2
               className="mb-4 text-3xl text-white"
               style={{ fontFamily: "var(--font-instrument-serif)" }}
             >
-              Digital product warranties — explained simply
+              Extended warranties — works like you expect
             </h2>
             <p className="mb-10 max-w-3xl text-slate-400">
-              Bought a laptop or phone? {siteConfig.name} can issue a{" "}
-              <strong className="text-emerald-200">Product Passport</strong> — a
-              digital certificate tied to your serial number. It proves warranty
-              terms, survives resale, and lets you file repair or refund claims.
-              This is separate from parametric insurance: manufacturers fund their
-              own reserve tranches.
+              Bought a laptop or phone? {siteConfig.name} works like Assurion or
+              SquareTrade: register with your{" "}
+              <strong className="text-emerald-200">registration code</strong> and
+              serial number, file repair or refund claims, and track status online. The
+              difference: your coverage record is permanent and verifiable — it can&apos;t
+              be lost, altered, or disputed later.
             </p>
             <div className="grid gap-6 md:grid-cols-3">
               <div className="rounded-2xl border border-white/10 bg-[#131f35] p-6">
@@ -331,9 +331,9 @@ export default function HowItWorksPage() {
                 </span>
                 <h3 className="mt-3 text-lg font-semibold">1. Register your product</h3>
                 <p className="mt-2 text-sm text-slate-400">
-                  Scan the QR on the box, enter your claim code and serial number.
-                  You receive a passport NFT in your wallet — like a warranty card
-                  that cannot be forged or quietly changed.
+                  Enter the registration code from your box or receipt, plus your serial
+                  number. Your protection plan activates — like registering with
+                  SquareTrade, but with a record that never disappears.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-[#131f35] p-6">
@@ -342,9 +342,9 @@ export default function HowItWorksPage() {
                 </span>
                 <h3 className="mt-3 text-lg font-semibold">2. Transfer when you sell</h3>
                 <p className="mt-2 text-sm text-slate-400">
-                  Passports are transferable. Sell your device second-hand and send
-                  the NFT to the buyer — they inherit remaining warranty time and
-                  repair history on-chain.
+                  Selling your device? Transfer the remaining coverage to the buyer so
+                  they inherit warranty time and repair history — no paperwork, no
+                  phone calls to customer service.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-[#131f35] p-6">
@@ -353,9 +353,9 @@ export default function HowItWorksPage() {
                 </span>
                 <h3 className="mt-3 text-lg font-semibold">3. File a claim</h3>
                 <p className="mt-2 text-sm text-slate-400">
-                  Something breaks? Submit repair, replacement, or refund requests.
-                  The manufacturer reviews and pays from their dedicated tranche —
-                  not from parametric insurance LP funds.
+                  Something breaks? Tell us what happened — choose repair, replacement,
+                  or refund. The manufacturer reviews your request, just like any
+                  protection plan you&apos;ve used before.
                 </p>
               </div>
             </div>
@@ -371,13 +371,13 @@ export default function HowItWorksPage() {
                 variant="outline"
                 className="border-white/15 bg-white/5 text-white hover:bg-white/10"
               >
-                View warranty dashboard
+                View My Products
               </LinkButton>
             </div>
             <p className="mt-6 text-xs text-slate-500">
-              Digital warranty infrastructure by {siteConfig.founder.name} — not
-              licensed insurance. Optional extended parametric cover can link to a
-              passport for accidental damage (e.g. flood).
+              Product protection by {siteConfig.founder.name} — manufacturer-backed
+              service plans, not licensed insurance. Optional parametric cover can add
+              accidental-damage protection (e.g. flood) on top.
             </p>
           </div>
         </section>
@@ -422,7 +422,7 @@ export default function HowItWorksPage() {
                 variant="outline"
                 className="border-emerald-400/30 bg-emerald-400/5 text-emerald-200 hover:bg-emerald-400/10"
               >
-                Register warranty
+                Register a product
               </LinkButton>
               <LinkButton
                 href="/app/lp"
