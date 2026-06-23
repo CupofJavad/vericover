@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { LinkButton } from "@/components/ui/link-button";
 import { ArrowRightIcon } from "@/components/icons";
 
@@ -17,16 +16,16 @@ export function CtaSection() {
           Early access opens on Base Sepolia — mainnet follows audit prep.
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <Button
-            size="lg"
-            className="bg-teal-400 font-semibold text-[#060b14] hover:bg-teal-300"
-          >
-            Connect Wallet
-            <ArrowRightIcon />
-          </Button>
           <LinkButton
-            href="#lp"
-            external
+            href="/app"
+            size="lg"
+            className="inline-flex items-center gap-2 bg-teal-400 font-semibold text-[#060b14] hover:bg-teal-300"
+          >
+            Launch App
+            <ArrowRightIcon />
+          </LinkButton>
+          <LinkButton
+            href="/app/lp"
             size="lg"
             variant="outline"
             className="border-white/15 bg-white/5 text-white hover:bg-white/10"
@@ -35,7 +34,7 @@ export function CtaSection() {
           </LinkButton>
         </div>
         <p className="mt-6 text-xs text-slate-500">
-          Wallet connection activates at dApp launch. Join the waitlist via{" "}
+          Live on Base Sepolia testnet. Follow{" "}
           <a
             href="https://x.com/Zarathustra_F"
             target="_blank"

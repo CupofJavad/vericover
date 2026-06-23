@@ -43,12 +43,11 @@ export function Hero() {
           </p>
           <div className="flex flex-wrap gap-4">
             <LinkButton
-              href="#cta"
-              external
+              href="/app"
               size="lg"
               className="inline-flex items-center gap-2 bg-teal-400 font-semibold text-[#060b14] hover:bg-teal-300"
             >
-              Connect Wallet
+              Launch App
               <ArrowRightIcon />
             </LinkButton>
             <LinkButton

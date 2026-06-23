@@ -332,14 +332,14 @@ export default function HowItWorksPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <LinkButton
-                href="/#cta"
+                href="/app/buy"
                 size="lg"
                 className="bg-teal-400 font-semibold text-[#060b14] hover:bg-teal-300"
               >
                 Get Cover
               </LinkButton>
               <LinkButton
-                href="/#lp"
+                href="/app/lp"
                 size="lg"
                 variant="outline"
                 className="border-white/15 bg-white/5 text-white hover:bg-white/10"

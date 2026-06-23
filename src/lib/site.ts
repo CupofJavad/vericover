@@ -3,7 +3,7 @@ export const siteConfig = {
   tagline: "Insurance finances, fully on-chain.",
   description:
     "VeriCover is a decentralized parametric risk-sharing protocol on Base. Immutable policy NFTs, transparent USDC reserve pools, and automated claims — built by Javad.",
-  url: "https://vericover.xyz",
+  url: "https://cupofjavad.github.io/vericover",
   founder: {
     name: "Javad",
     handle: "@Zarathustra_F",

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LinkButton } from "@/components/ui/link-button";
+import { ConnectButton } from "@/components/wallet/connect-button";
 import { ShieldIcon } from "@/components/icons";
 import { siteConfig } from "@/lib/site";
 
@@ -15,7 +16,6 @@ const mainNav = [
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const onHome = pathname === "/";
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#060b14]/80 backdrop-blur-xl">
@@ -35,8 +35,7 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden items-center gap-7 text-sm text-slate-400 md:flex">
           {mainNav.map((item) => {
-            const isActive =
-              item.isRoute && pathname === item.href;
+            const isActive = item.isRoute && pathname === item.href;
             return (
               <Link
                 key={item.href}
@@ -49,23 +48,27 @@ export function SiteHeader() {
               </Link>
             );
           })}
+          <Link href="/app" className="font-medium text-teal-300 hover:text-teal-200">
+            Launch App
+          </Link>
         </nav>
         <div className="flex items-center gap-2">
           <LinkButton
-            href={onHome ? "#lp" : "/#lp"}
-            external={onHome}
+            href="/app/lp"
             variant="outline"
             className="hidden border-white/15 bg-white/5 text-white hover:bg-white/10 sm:inline-flex"
           >
             Become an LP
           </LinkButton>
           <LinkButton
-            href={onHome ? "#cta" : "/#cta"}
-            external={!onHome ? false : true}
-            className="bg-teal-400 font-semibold text-[#060b14] hover:bg-teal-300"
+            href="/app"
+            className="hidden bg-teal-400 font-semibold text-[#060b14] hover:bg-teal-300 sm:inline-flex"
           >
-            Get Cover
+            Launch App
           </LinkButton>
+          <div className="sm:hidden">
+            <ConnectButton />
+          </div>
         </div>
       </div>
     </header>

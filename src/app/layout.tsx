@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Instrument_Serif } from "next/font/google";
+import { Providers } from "@/components/providers";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -79,7 +80,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
