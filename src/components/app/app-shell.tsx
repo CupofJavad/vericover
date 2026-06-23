@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ConnectButton } from "@/components/wallet/connect-button";
 import { ChainBanner } from "@/components/app/chain-banner";
+import { TestFundsBanner } from "@/components/app/test-funds-banner";
 import { ShieldIcon } from "@/components/icons";
 import { siteConfig } from "@/lib/site";
 
@@ -74,6 +75,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8 md:px-6">
         <ChainBanner />
+        <TestFundsBanner />
         {children}
       </main>
       <footer className="border-t border-white/10 px-4 py-6 text-center text-xs text-slate-500">

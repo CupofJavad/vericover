@@ -22,7 +22,9 @@ console.log(`Balance:  ${eth} ETH`);
 console.log(`On-chain: ${deployed.deployedAt ? "ACTIVE" : "demo mode (deployedAt null)"}`);
 
 if (balance === 0n) {
-  console.log("\nFund this address, then run:");
+  console.log("\nFund this address on Base Sepolia (chain 84532), then run:");
   console.log("  DEPLOYER_PRIVATE_KEY=0x... npm run deploy:warranties");
+  console.log("\nAlternative faucets (not Coinbase):");
+  console.log("  npm run fund:deployer -- --links");
   process.exit(1);
 }

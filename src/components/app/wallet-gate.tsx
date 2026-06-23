@@ -3,6 +3,7 @@
 import { useAccount, useChainId, useSwitchChain } from "wagmi";
 import { baseSepolia } from "wagmi/chains";
 import { ConnectButton } from "@/components/wallet/connect-button";
+import { FaucetLinks } from "@/components/app/faucet-links";
 import { Button } from "@/components/ui/button";
 
 export function WalletGate({ children }: { children: React.ReactNode }) {
@@ -28,17 +29,9 @@ export function WalletGate({ children }: { children: React.ReactNode }) {
           Works with Coinbase Wallet, MetaMask, Rabby, and other browser wallets.
         </p>
         <ConnectButton className="flex justify-center" />
-        <p className="mt-4 text-xs text-slate-500">
-          Need testnet funds?{" "}
-          <a
-            href="https://portal.cdp.coinbase.com/products/faucet"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-teal-400 hover:underline"
-          >
-            Coinbase Faucet (ETH + USDC)
-          </a>
-        </p>
+        <div className="mt-6 text-left">
+          <FaucetLinks compact />
+        </div>
       </div>
     );
   }
