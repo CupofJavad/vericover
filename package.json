@@ -9,10 +9,14 @@
     "lint": "eslint",
     "contracts:test": "cd contracts && forge test",
     "deploy:warranties": "node scripts/deploy-warranty.mjs",
-    "deploy:check": "node scripts/check-deployer.mjs"
+    "deploy:check": "node scripts/check-deployer.mjs",
+    "fund:deployer": "node scripts/fund-deployer.mjs",
+    "demo:docx": "node scripts/create-demo-docx.mjs",
+    "demo:drive": "python scripts/create-demo-drive-doc.py"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
+    "@metamask/connect-evm": "^2.1.0",
     "@tanstack/react-query": "^5.101.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -27,6 +31,7 @@
     "wagmi": "^3.6.18"
   },
   "devDependencies": {
+    "@coinbase/cdp-sdk": "^1.51.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
