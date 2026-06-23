@@ -34,7 +34,8 @@ export function Hero() {
           <p className="mb-4 max-w-xl text-lg leading-relaxed text-slate-300">
             VeriCover replaces the financial layer of insurance with immutable
             policy NFTs, a transparent USDC reserve pool, and automated parametric
-            claims — every step verifiable on-chain.
+            claims — plus digital product warranties with transferable passports.
+            Every step verifiable on-chain.
           </p>
           <p className="mb-8 text-sm text-slate-400">
             A decentralized parametric risk-sharing protocol. Not licensed
@@ -57,6 +58,14 @@ export function Hero() {
               className="border-white/15 bg-white/5 text-white hover:bg-white/10"
             >
               How it works (simple guide)
+            </LinkButton>
+            <LinkButton
+              href="/app/warranties"
+              size="lg"
+              variant="outline"
+              className="border-emerald-400/30 bg-emerald-400/5 text-emerald-200 hover:bg-emerald-400/10"
+            >
+              Digital warranties
             </LinkButton>
           </div>
           <p className="mt-6 text-sm text-slate-500">

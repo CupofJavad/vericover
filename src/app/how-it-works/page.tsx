@@ -304,6 +304,84 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
+        {/* Digital warranties */}
+        <section className="border-y border-white/10 bg-emerald-500/5 py-20">
+          <div className="mx-auto max-w-5xl px-6">
+            <Badge className="mb-4 border-emerald-400/20 bg-emerald-400/10 text-emerald-200 hover:bg-emerald-400/10">
+              New · Warranty rail
+            </Badge>
+            <h2
+              className="mb-4 text-3xl text-white"
+              style={{ fontFamily: "var(--font-instrument-serif)" }}
+            >
+              Digital product warranties — explained simply
+            </h2>
+            <p className="mb-10 max-w-3xl text-slate-400">
+              Bought a laptop or phone? {siteConfig.name} can issue a{" "}
+              <strong className="text-emerald-200">Product Passport</strong> — a
+              digital certificate tied to your serial number. It proves warranty
+              terms, survives resale, and lets you file repair or refund claims.
+              This is separate from parametric insurance: manufacturers fund their
+              own reserve tranches.
+            </p>
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-[#131f35] p-6">
+                <span className="text-2xl" aria-hidden>
+                  📦
+                </span>
+                <h3 className="mt-3 text-lg font-semibold">1. Register your product</h3>
+                <p className="mt-2 text-sm text-slate-400">
+                  Scan the QR on the box, enter your claim code and serial number.
+                  You receive a passport NFT in your wallet — like a warranty card
+                  that cannot be forged or quietly changed.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-[#131f35] p-6">
+                <span className="text-2xl" aria-hidden>
+                  🔄
+                </span>
+                <h3 className="mt-3 text-lg font-semibold">2. Transfer when you sell</h3>
+                <p className="mt-2 text-sm text-slate-400">
+                  Passports are transferable. Sell your device second-hand and send
+                  the NFT to the buyer — they inherit remaining warranty time and
+                  repair history on-chain.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-[#131f35] p-6">
+                <span className="text-2xl" aria-hidden>
+                  🛠️
+                </span>
+                <h3 className="mt-3 text-lg font-semibold">3. File a claim</h3>
+                <p className="mt-2 text-sm text-slate-400">
+                  Something breaks? Submit repair, replacement, or refund requests.
+                  The manufacturer reviews and pays from their dedicated tranche —
+                  not from parametric insurance LP funds.
+                </p>
+              </div>
+            </div>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <LinkButton
+                href="/app/warranties/register"
+                className="bg-emerald-400 font-semibold text-[#060b14] hover:bg-emerald-300"
+              >
+                Register a product
+              </LinkButton>
+              <LinkButton
+                href="/app/warranties"
+                variant="outline"
+                className="border-white/15 bg-white/5 text-white hover:bg-white/10"
+              >
+                View warranty dashboard
+              </LinkButton>
+            </div>
+            <p className="mt-6 text-xs text-slate-500">
+              Digital warranty infrastructure by {siteConfig.founder.name} — not
+              licensed insurance. Optional extended parametric cover can link to a
+              passport for accidental damage (e.g. flood).
+            </p>
+          </div>
+        </section>
+
         {/* Simple disclaimer */}
         <section className="border-t border-white/10 bg-amber-500/5 py-10">
           <div className="mx-auto max-w-3xl px-6 text-center">
@@ -337,6 +415,14 @@ export default function HowItWorksPage() {
                 className="bg-teal-400 font-semibold text-[#060b14] hover:bg-teal-300"
               >
                 Get Cover
+              </LinkButton>
+              <LinkButton
+                href="/app/warranties/register"
+                size="lg"
+                variant="outline"
+                className="border-emerald-400/30 bg-emerald-400/5 text-emerald-200 hover:bg-emerald-400/10"
+              >
+                Register warranty
               </LinkButton>
               <LinkButton
                 href="/app/lp"

@@ -10,6 +10,7 @@ const nav = [
   { href: "/app", label: "Dashboard", exact: true },
   { href: "/app/buy", label: "Buy Cover" },
   { href: "/app/policies", label: "My Policies" },
+  { href: "/app/warranties", label: "Warranties" },
   { href: "/app/lp", label: "LP Staking" },
 ];
 

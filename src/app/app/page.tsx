@@ -7,6 +7,7 @@ import { WalletGate } from "@/components/app/wallet-gate";
 import { LinkButton } from "@/components/ui/link-button";
 import { USDC_BASE_SEPOLIA, erc20Abi } from "@/lib/wagmi";
 import { getPolicies, getLpPosition } from "@/lib/policies";
+import { getPassports } from "@/lib/warranties";
 import { useEffect, useState } from "react";
 import type { Policy } from "@/lib/policies";
 import type { LpPosition } from "@/lib/policies";
@@ -15,6 +16,7 @@ export default function DashboardPage() {
   const { address, isConnected } = useAccount();
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [lp, setLp] = useState<LpPosition | null>(null);
+  const [passportCount, setPassportCount] = useState(0);
 
   const { data: usdcBalance } = useReadContract({
     address: USDC_BASE_SEPOLIA,
@@ -28,6 +30,7 @@ export default function DashboardPage() {
     if (address) {
       setPolicies(getPolicies(address));
       setLp(getLpPosition(address));
+      setPassportCount(getPassports(address).filter((p) => p.status === "active").length);
     }
   }, [address]);
 
@@ -49,12 +52,17 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <StatCard label="USDC Balance" value={`$${usdc}`} sub="Wallet on Base Sepolia" />
           <StatCard
             label="Active Policies"
             value={String(activePolicies.length)}
             sub={`${policies.length} total`}
+          />
+          <StatCard
+            label="Warranty Passports"
+            value={String(passportCount)}
+            sub="Digital product passports"
           />
           <StatCard
             label="LP Staked"
@@ -76,6 +84,9 @@ export default function DashboardPage() {
               </LinkButton>
               <LinkButton href="/app/policies" variant="outline" className="border-white/15 text-white">
                 My Policies
+              </LinkButton>
+              <LinkButton href="/app/warranties" variant="outline" className="border-white/15 text-white">
+                Warranties
               </LinkButton>
             </div>
           </div>

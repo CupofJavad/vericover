@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const products = [
+const insuranceProducts = [
   {
     name: "Stablecoin Depeg Cover",
     tag: "DeFi",
@@ -28,6 +28,15 @@ const products = [
   },
 ];
 
+const warrantyProduct = {
+  name: "Digital Product Warranties",
+  tag: "Physical goods",
+  description:
+    "Register electronics with a claim code to mint a Product Passport NFT. File repair, replacement, or refund claims — funded by manufacturer tranches, isolated from parametric LP pools.",
+  trigger: "Claim code + serial → passport mint",
+  premium: "Included with product / manufacturer-backed",
+};
+
 export function ProductsSection() {
   return (
     <section id="products" className="py-24">
@@ -43,13 +52,12 @@ export function ProductsSection() {
             Cover that pays itself
           </h2>
           <p className="max-w-2xl text-slate-400">
-            Three launch products demonstrating automated, rule-based claims.
-            Each policy is an immutable ERC-721 NFT with encoded terms — purchase
-            with USDC, verify on Basescan.
+            Parametric insurance products plus a separate warranty rail for physical
+            goods. Policies and passports are immutable ERC-721 NFTs — verify on Basescan.
           </p>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {products.map((p) => (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {insuranceProducts.map((p) => (
             <Card
               key={p.name}
               className="border-white/10 bg-[#131f35] text-white transition hover:border-teal-400/20"
@@ -73,6 +81,27 @@ export function ProductsSection() {
               </CardContent>
             </Card>
           ))}
+          <Card className="border-emerald-400/20 bg-[#131f35] text-white transition hover:border-emerald-400/30">
+            <CardHeader>
+              <Badge
+                variant="outline"
+                className="mb-2 w-fit border-emerald-400/30 text-emerald-300"
+              >
+                {warrantyProduct.tag}
+              </Badge>
+              <CardTitle>{warrantyProduct.name}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-slate-400">{warrantyProduct.description}</p>
+              <div className="rounded-lg border border-white/10 bg-black/20 p-3 text-sm">
+                <p className="text-xs text-slate-500">Registration</p>
+                <p>{warrantyProduct.trigger}</p>
+              </div>
+              <p className="text-xs text-slate-500">
+                Coverage model: {warrantyProduct.premium}
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>
