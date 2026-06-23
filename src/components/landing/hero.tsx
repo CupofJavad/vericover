@@ -52,13 +52,12 @@ export function Hero() {
               <ArrowRightIcon />
             </LinkButton>
             <LinkButton
-              href="#lp"
-              external
+              href="/how-it-works"
               size="lg"
               variant="outline"
               className="border-white/15 bg-white/5 text-white hover:bg-white/10"
             >
-              Become an LP — Earn Yield
+              How it works (simple guide)
             </LinkButton>
           </div>
           <p className="mt-6 text-sm text-slate-500">

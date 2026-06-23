@@ -1,4 +1,4 @@
-import { Header } from "@/components/landing/header";
+import { SiteHeader } from "@/components/layout/site-header";
 import { Hero } from "@/components/landing/hero";
 import { HowItWorksSection } from "@/components/landing/how-it-works";
 import { ProductsSection } from "@/components/landing/products";
@@ -12,7 +12,7 @@ import { Footer } from "@/components/landing/footer";
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#060b14] text-white">
-      <Header />
+      <SiteHeader />
       <main>
         <Hero />
         <HowItWorksSection />
