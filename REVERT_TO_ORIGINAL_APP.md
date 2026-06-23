@@ -3,61 +3,63 @@
 **Owner:** Javad (@Zarathustra_F)  
 **Last updated:** June 23, 2026
 
-This document explains how to return VeriCover to the **insurance-only** version (parametric policies, ReservePool, dApp) without digital warranty extensions.
+This document explains how to return VeriCover to earlier snapshots — insurance-only, pre-warranty, or pre-UX-refresh — without losing work.
 
 ---
 
 ## Protection tags & branches
 
-| Reference | Commit / branch | What it contains |
-|-----------|-----------------|------------------|
+| Reference | Commit | What it contains |
+|-----------|--------|------------------|
 | `original-app-v1` | `3325604` | Early landing page snapshot (pre-dApp). Historical baseline. |
 | `pre-digital-warranties-v1` | `16d9fda` | **Full production app before warranty work** — landing, how-it-works, wallet dApp, GitHub Pages deploy. |
-| `master` | `16d9fda` (at branch creation) | Same as pre-warranty snapshot; production line. |
-| `feature/digital-warranties` | branched from `16d9fda` | Digital warranty extension (planning + implementation). |
+| `pre-traditional-ux-v1` | `9b0c8e5` | **Current production before traditional UX refresh** — on-chain warranty rail live on Base Sepolia, faucet UX, MetaMask fix. |
+| `master` | latest | Production line (GitHub Pages). |
+| `feature/digital-warranties` | branched from `16d9fda` | Digital warranty extension (contracts + UI). |
+| `feature/traditional-warranty-ux` | branched from `pre-traditional-ux-v1` | Traditional warranty UX refresh (non-crypto language, onboarding). |
 
 ---
 
-## Quick revert (recommended)
+## Quick revert commands
 
-Return to the insurance-only production app:
+### Undo traditional UX refresh only (keep on-chain warranties)
+
+```bash
+cd C:\Users\javad\vericover
+git fetch origin
+git checkout master
+git reset --hard pre-traditional-ux-v1
+git push origin master --force-with-lease
+```
+
+### Return to insurance-only production app (no warranties)
 
 ```bash
 cd C:\Users\javad\vericover
 git fetch origin
 git checkout master
 git reset --hard pre-digital-warranties-v1
-# Optional: force remote master if you need to undo merged warranty work
-# git push origin master --force-with-lease
+git push origin master --force-with-lease
 ```
 
-Or checkout the tag directly:
+### Checkout a tag without changing master
 
 ```bash
-git checkout pre-digital-warranties-v1
+git fetch origin --tags
+git checkout pre-traditional-ux-v1    # on-chain warranties, crypto-native UX
+git checkout pre-digital-warranties-v1   # insurance-only MVP
+git checkout original-app-v1          # earliest landing only
 ```
 
 ---
 
-## Discard warranty branch only
-
-If warranty work stays on the feature branch and you want pure insurance on `master`:
+## Discard feature branch work
 
 ```bash
 git checkout master
-git reset --hard pre-digital-warranties-v1
-git branch -D feature/digital-warranties   # only if you want to delete local branch
+git branch -D feature/traditional-warranty-ux   # local only
+# Remote: git push origin --delete feature/traditional-warranty-ux
 ```
-
----
-
-## Restore from `original-app-v1` (older baseline)
-
-```bash
-git checkout original-app-v1
-```
-
-Note: This predates the live dApp (`/app` routes). Use `pre-digital-warranties-v1` for the complete insurance MVP site.
 
 ---
 
@@ -69,19 +71,34 @@ npm run build
 git push origin master
 ```
 
-GitHub Actions will redeploy to: https://cupofjavad.github.io/vericover/
+GitHub Actions redeploys to: https://cupofjavad.github.io/vericover/
 
 ---
 
 ## Current work branch
 
-**Active development for warranties:** `feature/digital-warranties`
+**Active development for traditional UX:** `feature/traditional-warranty-ux`
 
-Do **not** merge into `master` until Javad approves the warranty plan and implementation review is complete.
+Do **not** merge into `master` until Javad approves the UX plan and implementation review is complete.
 
 ```bash
-git checkout feature/digital-warranties
+git fetch origin
+git checkout -b feature/traditional-warranty-ux pre-traditional-ux-v1
+# or: git checkout feature/traditional-warranty-ux
 ```
+
+---
+
+## On-chain warranty contracts (Base Sepolia)
+
+Deployed at `pre-traditional-ux-v1` / `9b0c8e5`. Reverting UX does **not** undeploy contracts.
+
+| Contract | Address |
+|----------|---------|
+| ProductPassport721 | `0x23193001a1C61cDEB68E7bd1a4E87a38eC586165` |
+| WarrantyRegistry | `0x4D25946083f37910F8837406aC0dd2B5E4543075` |
+| WarrantyClaimManager | `0xE44123dEB8fE2C258B7B73d85557126ADDC02494` |
+| WarrantyRedemption | `0xc0408757A76715dC3E9761be35aA790b94d64008` |
 
 ---
 
